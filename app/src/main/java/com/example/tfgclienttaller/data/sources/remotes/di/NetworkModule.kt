@@ -2,7 +2,7 @@ package com.example.tfgclienttaller.data.sources.remotes.di
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.example.tfgclienttaller.data.sources.remotes.api.TallerService
+import com.example.tfgclienttaller.data.sources.remotes.api.UsuariosService
 import com.example.tfgclienttaller.utils.Constantes.BASE_URL
 import com.google.gson.*
 import dagger.Module
@@ -66,6 +66,6 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun pokemonService(retrofit: Retrofit): TallerService =
-        retrofit.create(TallerService::class.java)
+    fun pokemonService(retrofit: Retrofit): UsuariosService =
+        retrofit.create(UsuariosService::class.java)
 }

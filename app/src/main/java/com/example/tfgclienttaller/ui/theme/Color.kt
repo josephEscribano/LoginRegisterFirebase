@@ -1,8 +1,9 @@
 package com.example.tfgclienttaller.ui.theme
 
+import android.annotation.SuppressLint
 import androidx.compose.ui.graphics.Color
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
+val AmarilloPrimario = Color(0xFFFFB838)
+val AzulSecundario = Color(0xFF2965DC)
+val AzulVariante = Color(0xff1890d3)
+val White = Color(0xFFFFFFFF)
