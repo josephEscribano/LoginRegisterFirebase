@@ -7,13 +7,17 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tfgclienttaller.data.repositories.RegisterScreenRepository
+import com.example.tfgclienttaller.data.sources.firebase.Authentication
 import com.example.tfgclienttaller.domain.Usuario
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RegisterScreenViewModel @Inject constructor(private val registerScreenRepository: RegisterScreenRepository) :
+class RegisterScreenViewModel @Inject constructor(
+    private val registerScreenRepository: RegisterScreenRepository,
+    private val authentication: Authentication
+    ) :
     ViewModel() {
 
     var email by mutableStateOf("")
@@ -60,10 +64,11 @@ class RegisterScreenViewModel @Inject constructor(private val registerScreenRepo
                         registerScreenRepository.registerServer(
                             Usuario(
                                 email = email,
-                                name = name,
-                                surname = surname,
+                                nombre = name,
+                                apellido = surname,
                                 pass = pass,
-                                phone = phone)
+                                telefono = phone,
+                                uidToken = authentication.dataUser(),)
                         )
                     }catch (e: Exception){
                         e.message?.let { Log.e("Error al registrar en el Server", it) }

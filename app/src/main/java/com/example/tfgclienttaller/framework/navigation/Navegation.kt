@@ -28,7 +28,10 @@ fun Navegation(activity: ComponentActivity) {
         composable(
             route = Routes.REGISTERSCREEN
         ){
-            DataScreen()
+            DataScreen(
+                activity = activity,
+                onNavigate = { navController.navigate(Routes.LOGINSCREEN)}
+            )
         }
     }
 }

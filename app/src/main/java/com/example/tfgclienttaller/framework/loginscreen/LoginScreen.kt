@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.Top
@@ -30,7 +31,9 @@ fun Login(
     viewModel: LoginScreenViewModel = hiltViewModel(),
     onNavigate: () -> Unit
 ) {
-
+    LaunchedEffect(key1 = true){
+        viewModel.handleEvent(LoginScreenContract.Event.sendToken)
+    }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -45,7 +48,7 @@ fun Login(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painter = painterResource(id = R.drawable.logocompletofondoamarillo),
+                painter = painterResource(id = R.drawable.logocompletoazul),
                 contentDescription = "Imagen Login"
             )
 
@@ -102,8 +105,9 @@ fun Login(
                 text = "Recuperar mi contraseña",
                 textDecoration = TextDecoration.Underline,
                 color = AzulSecundario,
-                modifier = Modifier.clickable {  }.
-                    align(CenterHorizontally)
+                modifier = Modifier
+                    .clickable { }
+                    .align(CenterHorizontally)
             )
             Spacer(modifier = Modifier.size(10.dp))
             Row(
@@ -115,7 +119,7 @@ fun Login(
                     modifier = Modifier
                         .width(135.dp)
                         .size(50.dp)
-                        .border(width = 1.dp, color = White, shape = RoundedCornerShape(8.dp) ),
+                        .border(width = 1.dp, color = White, shape = RoundedCornerShape(8.dp)),
                     elevation = ButtonDefaults.elevation(
                         defaultElevation = 6.dp,
                         pressedElevation = 8.dp,
@@ -134,7 +138,7 @@ fun Login(
                     modifier = Modifier
                         .width(135.dp)
                         .size(50.dp)
-                        .border(width = 1.dp, color = White, shape = RoundedCornerShape(8.dp) ),
+                        .border(width = 1.dp, color = White, shape = RoundedCornerShape(8.dp)),
                     elevation = ButtonDefaults.elevation(
                         defaultElevation = 6.dp,
                         pressedElevation = 8.dp,

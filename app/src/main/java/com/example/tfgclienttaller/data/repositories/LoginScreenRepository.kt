@@ -10,5 +10,5 @@ class LoginScreenRepository @Inject constructor(
     private val authentication: Authentication,
     private val remoteDataSource: RemoteDataSource){
     fun doLogin(activity: ComponentActivity, email: String, pass: String) = authentication.login(activity,email, pass)
-    fun register(activity: ComponentActivity, email: String, pass: String) = authentication.register(activity, email, pass)
+    fun sendToken(token:String) = remoteDataSource.sendToken(token)
 }

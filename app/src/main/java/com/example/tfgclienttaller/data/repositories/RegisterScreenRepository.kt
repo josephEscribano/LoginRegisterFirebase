@@ -11,5 +11,7 @@ class RegisterScreenRepository @Inject constructor(
     private val remoteDataSource: RemoteDataSource
 ){
     fun register(activity: ComponentActivity, email: String, pass: String) = authentication.register(activity, email, pass)
-    suspend fun registerServer(usuario: Usuario) = remoteDataSource.registerServer(usuario)
+    suspend fun registerServer(usuario: Usuario) {
+        remoteDataSource.registerServer(usuario)
+    }
 }

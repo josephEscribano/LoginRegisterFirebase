@@ -12,6 +12,6 @@ interface UsuariosService {
     @POST("usuarios")
     suspend fun saveUser(@Body usuario:Usuario) : Response<ApiRespuesta>
 
-    @POST("/usuarios/token")
+    @POST("usuarios/token")
     fun sendToken(@Query("token") token: String) : Response<ApiRespuesta>
 }

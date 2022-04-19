@@ -7,22 +7,21 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.tfgclienttaller.data.sources.remotes.RemoteDataSource
-import com.example.tfgclienttaller.data.sources.remotes.api.UsuariosService
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Singleton
 
 
-class MyFirebaseMessagingService : FirebaseMessagingService() {
+class MyFirebaseMessagingService @Inject constructor() : FirebaseMessagingService() {
 
-    companion object {
-        var tokenFinal: String = ""
-    }
+//    companion object {
+//        var tokenFinal: String = ""
+//    }
+
+    var tokenFinal: String = ""
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
@@ -46,7 +45,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
 
-
     override fun onNewToken(token: String) {
 
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
@@ -59,7 +57,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 return@OnCompleteListener
             } else {
                 val token = task.result
-//                sendToken(token)
+                tokenFinal = token
 
             }
 
@@ -90,13 +88,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     }
 
-    fun getToken(): String {
-        return tokenFinal
-    }
+//    fun getToken(): String {
+//        return tokenFinal
+//    }
 
-    fun sendToken(token:String) {
-        lateinit var usuariosService: UsuariosService
-        usuariosService.sendToken(token)
+    fun sendToken() : String {
+        return tokenFinal
     }
 
 

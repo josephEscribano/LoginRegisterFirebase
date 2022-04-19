@@ -4,12 +4,14 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.tfgclienttaller.data.sources.remotes.api.UsuariosService
 import com.example.tfgclienttaller.utils.Constantes.BASE_URL
+import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.gson.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.Protocol
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.reflect.Type
@@ -26,10 +28,13 @@ object NetworkModule {
     fun provideHttpClient(): OkHttpClient {
         return OkHttpClient
             .Builder()
+            .protocols(listOf(Protocol.HTTP_1_1))
             .readTimeout(15, TimeUnit.SECONDS)
             .connectTimeout(15, TimeUnit.SECONDS)
             .build()
     }
+
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     @Singleton
@@ -68,4 +73,5 @@ object NetworkModule {
     @Provides
     fun pokemonService(retrofit: Retrofit): UsuariosService =
         retrofit.create(UsuariosService::class.java)
+
 }

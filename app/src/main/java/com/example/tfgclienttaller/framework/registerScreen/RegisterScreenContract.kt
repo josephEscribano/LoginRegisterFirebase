@@ -13,6 +13,6 @@ interface RegisterScreenContract {
         data class onPhoneChange(val phone: String) : Event()
         data class onNameChange(val name: String) : Event()
         data class register(val activity: ComponentActivity) : Event()
-        data class registerServer(val usuario: Usuario) : Event()
+        object registerServer : Event()
     }
 }

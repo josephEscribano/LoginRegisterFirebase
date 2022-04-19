@@ -1,5 +1,6 @@
 package com.example.tfgclienttaller.framework.loginscreen
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -7,13 +8,17 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tfgclienttaller.data.repositories.LoginScreenRepository
+import com.example.tfgclienttaller.data.sources.firebase.MyFirebaseMessagingService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginScreenViewModel @Inject constructor(private val loginScreenRepository: LoginScreenRepository): ViewModel(){
+class LoginScreenViewModel @Inject constructor(
+    private val loginScreenRepository: LoginScreenRepository,
+    @SuppressLint("StaticFieldLeak") private val myFirebaseMessagingService: MyFirebaseMessagingService
+    ): ViewModel(){
 
     var email by mutableStateOf("")
         private set
@@ -37,20 +42,15 @@ class LoginScreenViewModel @Inject constructor(private val loginScreenRepository
                     }
                 }
             }
-            is LoginScreenContract.Event.register -> {
-                viewModelScope.launch {
-                    try {
-                        loginScreenRepository.register(event.activity,email,pass)
-                    }catch (e:Exception){
-                        e.message?.let { Log.e("Error Register", it) }
-                    }
-                }
-            }
             is LoginScreenContract.Event.onPassChange -> {
                 pass = event.pass
             }
             is LoginScreenContract.Event.onEmailChange -> {
                 email = event.email
+            }
+            is LoginScreenContract.Event.sendToken -> {
+                val token = myFirebaseMessagingService.sendToken()
+                loginScreenRepository.sendToken(token)
             }
         }
     }

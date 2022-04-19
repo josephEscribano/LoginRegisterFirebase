@@ -6,8 +6,10 @@ import javax.inject.Inject
 
 class RemoteDataSource@Inject constructor(private val usuariosService: UsuariosService) : BaseApiResponse() {
 
-    suspend fun registerServer(usuario: Usuario) =
+    suspend fun registerServer(usuario: Usuario) {
         safeApiCall(apicall = {usuariosService.saveUser(usuario)})
+    }
+
 
     fun sendToken(token: String) = safeNotCorrutineApiCall(apicall = {usuariosService.sendToken(token)})
 }

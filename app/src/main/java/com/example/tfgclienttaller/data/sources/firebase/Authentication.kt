@@ -54,4 +54,15 @@ class Authentication @Inject constructor(){
 
             }
     }
+
+    fun dataUser() : String{
+        val user = Firebase.auth.currentUser
+        var uid = ""
+        user?.let {
+            uid = user.uid
+
+        }
+
+        return uid
+    }
 }
