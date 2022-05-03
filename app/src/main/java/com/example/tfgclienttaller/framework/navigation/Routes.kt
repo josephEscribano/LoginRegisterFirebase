@@ -4,4 +4,5 @@ object Routes {
 
     const val LOGINSCREEN = "loginscreen"
     const val REGISTERSCREEN = "registerscreen"
+    const val RECOVERPASSSCREEN = "recoverscreen"
 }

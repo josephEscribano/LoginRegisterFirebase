@@ -2,9 +2,10 @@ package com.example.tfgclienttaller.data.sources.remotes.di
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.example.tfgclienttaller.data.sources.network.AuthorizationInterceptor
+import com.example.tfgclienttaller.data.sources.network.CacheDataUser
 import com.example.tfgclienttaller.data.sources.remotes.api.UsuariosService
 import com.example.tfgclienttaller.utils.Constantes.BASE_URL
-import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.gson.*
 import dagger.Module
 import dagger.Provides
@@ -19,18 +20,21 @@ import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
+
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideHttpClient(): OkHttpClient {
+    fun provideHttpClient(cacheDataUser: CacheDataUser): OkHttpClient {
+        val authorizationInterceptor = AuthorizationInterceptor(cacheDataUser)
         return OkHttpClient
             .Builder()
             .protocols(listOf(Protocol.HTTP_1_1))
             .readTimeout(15, TimeUnit.SECONDS)
             .connectTimeout(15, TimeUnit.SECONDS)
+            .addInterceptor(authorizationInterceptor)
             .build()
     }
 
@@ -68,7 +72,12 @@ object NetworkModule {
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }
-
+    @Singleton
+    @Provides
+    fun getCacheDataUser() : CacheDataUser{
+        val cacheDataUser = CacheDataUser()
+        return cacheDataUser
+    }
     @Singleton
     @Provides
     fun pokemonService(retrofit: Retrofit): UsuariosService =

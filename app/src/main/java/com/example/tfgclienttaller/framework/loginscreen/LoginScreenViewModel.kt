@@ -7,18 +7,33 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.tfgclienttaller.data.repositories.LocalRepository
 import com.example.tfgclienttaller.data.repositories.LoginScreenRepository
+import com.example.tfgclienttaller.data.sources.firebase.Authentication
 import com.example.tfgclienttaller.data.sources.firebase.MyFirebaseMessagingService
+import com.example.tfgclienttaller.domain.Usuario
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginScreenViewModel @Inject constructor(
     private val loginScreenRepository: LoginScreenRepository,
+    private val localRepository: LocalRepository,
+    private val authentication: Authentication,
     @SuppressLint("StaticFieldLeak") private val myFirebaseMessagingService: MyFirebaseMessagingService
-    ): ViewModel(){
+) : ViewModel() {
+
+    private val _loginScreenState: MutableStateFlow<LoginScreenContract.StateToken> by lazy {
+        MutableStateFlow(LoginScreenContract.StateToken())
+    }
+    val loginScreenState: StateFlow<LoginScreenContract.StateToken> = _loginScreenState
+
+
+    private val _error = Channel<String>()
+    val error = _error.receiveAsFlow()
 
     var email by mutableStateOf("")
         private set
@@ -27,18 +42,41 @@ class LoginScreenViewModel @Inject constructor(
         private set
 
 
-    fun handleEvent(event: LoginScreenContract.Event){
-        when(event){
 
-            //TODO MEJORAR LA INTERFAZ QUE ES UNA MIERDA
-            //TODO Añadir un snackbar para ver si se ha logueado o no
-            //TODO Enviar el usuario junto con el token a mi servidor para registrar al usuario y loguearlo en el server
-            is LoginScreenContract.Event.doLogin -> {
+
+
+    @SuppressLint("LongLogTag")
+    fun handleEvent(event: LoginScreenContract.Event) {
+        when (event) {
+
+            is LoginScreenContract.Event.doLoginFirebase -> {
                 viewModelScope.launch {
                     try {
-                        loginScreenRepository.doLogin(event.activity,email,pass)
-                    }catch (e:Exception){
-                        e.message?.let { Log.e("Error Login", it) }
+                        localRepository.getToken().catch(action = { cause ->
+                            Log.e(
+                                ConstantesLogin.TAGGETTOKEN,
+                                cause.message ?: ConstantesLogin.ERROROBTENERTOKEN
+                            )
+
+                        }).collect { result ->
+                            loginScreenRepository.doLoginFirebase(
+                                event.activity, Usuario(
+                                    email = email,
+                                    pass = pass,
+                                    tokenNotificacion = result
+                                )
+                            )
+                            _loginScreenState.update { it.copy(logueado = true) }
+
+                        }
+
+
+                    } catch (e: Exception) {
+                        e.message?.let {
+                            Log.e(ConstantesLogin.ERRORLOGIN, it)
+                            _error.send(e.message!!)
+                        }
+
                     }
                 }
             }
@@ -48,9 +86,37 @@ class LoginScreenViewModel @Inject constructor(
             is LoginScreenContract.Event.onEmailChange -> {
                 email = event.email
             }
-            is LoginScreenContract.Event.sendToken -> {
-                val token = myFirebaseMessagingService.sendToken()
-                loginScreenRepository.sendToken(token)
+            is LoginScreenContract.Event.doLoginWithGoogleFirebase -> {
+                viewModelScope.launch {
+                    try {
+                        localRepository.getToken().catch(action = { cause ->
+                            _error.send(cause.message ?: ConstantesLogin.ERROROBTENERTOKEN)
+
+                        }).collect { result ->
+                            loginScreenRepository.doLoginWithGoogleFirebase(
+                                event.activity,
+                                event.credential,
+                                result
+                            )
+                            _loginScreenState.update { it.copy(logueado = true) }
+                        }
+
+                    } catch (e: Exception) {
+
+                        e.message?.let { Log.e(ConstantesLogin.TAGERRORGOOGLEFIREBASE, it) }
+                    }
+
+                }
+            }
+            is LoginScreenContract.Event.doLoginWithGoogle -> {
+                viewModelScope.launch {
+                    try {
+                        loginScreenRepository.doLoginWithGoogle(event.activity)
+
+                    } catch (e: Exception) {
+                        e.message?.let { Log.e(ConstantesLogin.TAGERRORLOGINGOOGLE, it) }
+                    }
+                }
             }
         }
     }

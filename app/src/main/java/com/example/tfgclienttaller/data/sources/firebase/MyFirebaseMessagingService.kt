@@ -6,22 +6,20 @@ import android.content.Context
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.example.tfgclienttaller.data.sources.remotes.RemoteDataSource
+import com.example.tfgclienttaller.data.repositories.LocalRepository
+import com.example.tfgclienttaller.domain.MyToken
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import javax.inject.Singleton
 
-
+@AndroidEntryPoint
 class MyFirebaseMessagingService @Inject constructor() : FirebaseMessagingService() {
 
-//    companion object {
-//        var tokenFinal: String = ""
-//    }
-
-    var tokenFinal: String = ""
+    @Inject
+    lateinit var localRepository: LocalRepository
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
@@ -30,7 +28,6 @@ class MyFirebaseMessagingService @Inject constructor() : FirebaseMessagingServic
             ConstantesFirebase.FROM + "${remoteMessage.from}"
         )
 
-        // Check if message contains a data payload.
         if (remoteMessage.data.isNotEmpty()) {
             Log.d(
                 ConstantesFirebase.TAGMESSAGERECEIVE,
@@ -57,7 +54,8 @@ class MyFirebaseMessagingService @Inject constructor() : FirebaseMessagingServic
                 return@OnCompleteListener
             } else {
                 val token = task.result
-                tokenFinal = token
+                localRepository.insertToken(MyToken(token))
+
 
             }
 
@@ -86,14 +84,6 @@ class MyFirebaseMessagingService @Inject constructor() : FirebaseMessagingServic
         val notiManager = NotificationManagerCompat.from(applicationContext)
         notiManager.notify(1, notify)
 
-    }
-
-//    fun getToken(): String {
-//        return tokenFinal
-//    }
-
-    fun sendToken() : String {
-        return tokenFinal
     }
 
 

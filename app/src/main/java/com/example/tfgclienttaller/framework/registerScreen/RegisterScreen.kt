@@ -1,17 +1,21 @@
 package com.example.tfgclienttaller.framework.registerScreen
 
+import android.util.Patterns
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.tfgclienttaller.R
@@ -58,6 +62,7 @@ fun DataScreen(
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     backgroundColor = White,
                 ),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 placeholder = { Text(text = "Contraseña") },
                 value = viewModel.pass,
                 onValueChange = {
@@ -94,6 +99,7 @@ fun DataScreen(
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     backgroundColor = White,
                 ),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 placeholder = { Text(text = "Phone") },
                 value = viewModel.phone,
                 onValueChange = {
@@ -115,9 +121,9 @@ fun DataScreen(
                     backgroundColor = AzulSecundario
                 ),
                 onClick = {
-//                    onNavigate()
-//                    viewModel.handleEvent(RegisterScreenContract.Event.register(activity))
-                    viewModel.handleEvent(RegisterScreenContract.Event.registerServer)
+                    viewModel.handleEvent(RegisterScreenContract.Event.register(activity))
+                    onNavigate()
+
                 },
                 shape = RoundedCornerShape(8.dp)
             ) {
